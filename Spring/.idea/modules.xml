@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Todo.iml" filepath="$PROJECT_DIR$/.idea/Todo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Spring.iml" filepath="$PROJECT_DIR$/.idea/Spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Todo/Todo.iml" filepath="$PROJECT_DIR$/Todo/Todo.iml" />
     </modules>
   </component>
 </project>

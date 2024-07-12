@@ -1,45 +1,35 @@
 package com.TodoApp.Todo.controller;
 
-import com.TodoApp.Todo.model.JwtRequest;
-import com.TodoApp.Todo.model.JwtResponse;
-import com.TodoApp.Todo.service.impl.MyUserDetailsService;
-import com.TodoApp.Todo.util.JwtUtil;
+import com.TodoApp.Todo.dto.JWTAuthResponse;
+import com.TodoApp.Todo.dto.SignInRequest;
+import com.TodoApp.Todo.dto.SignUpRequest;
+import com.TodoApp.Todo.entity.User;
+import com.TodoApp.Todo.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    public AuthenticationController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
-    @Autowired
-    private MyUserDetailsService userDetailsService;
+    @PostMapping("/signup")
+    public ResponseEntity<User> signUp(@RequestBody  SignUpRequest signUpRequest){
+        return new ResponseEntity(authenticationService.signUp(signUpRequest), HttpStatus.CREATED);
+    }
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-            );
-        } catch (BadCredentialsException e) {            throw new Exception("Incorrect username or password", e);
-        }
-
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
-
-        return ResponseEntity.ok(new JwtResponse(jwt));
+    @PostMapping("/signin")
+    public ResponseEntity<JWTAuthResponse> signin(@RequestBody SignInRequest signInRequest  ){
+        return ResponseEntity.ok(authenticationService.signIn(signInRequest));
     }
 }
+
 
