@@ -3,9 +3,6 @@ package com.TodoApp.Todo.dto;
 import lombok.Data;
 
 @Data
-public class JWTAuthResponse {
-
+public class RefreshTokenRequest {
     private String token;
-
-    private String refreshToken;
 }
