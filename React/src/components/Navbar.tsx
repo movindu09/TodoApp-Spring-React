@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { SetStateAction, useContext, useState } from 'react';
 import { Menu } from 'antd';
 import {
 	DashboardOutlined,
@@ -6,21 +6,30 @@ import {
 	LogoutOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '../hooks/AuthContext';
+import '../styles/Navbar.css';
 
-const Nav = ({
+
+const Navbar = ({
 	showHome,
 	showDashboard,
 	showDashboard2,
 	showLogin,
 	showRegister,
 	showLogout,
+}: {
+	showHome: boolean;
+	showDashboard: boolean;
+	showDashboard2: boolean;
+	showLogin: boolean;
+	showRegister: boolean;
+	showLogout: boolean;
 }) => {
-	const [current, setCurrent] = useState();
+	const [current, setCurrent] = useState<string>(''); 
 	const navigate = useNavigate();
 	const { logout } = useContext(AuthContext);
 
-	const onClick = (e) => {
+	const onClick = (e: { key: SetStateAction<string>; }) => {
 		setCurrent(e.key);
 	};
 
@@ -30,7 +39,7 @@ const Nav = ({
 			key: 'home',
 			icon: <HomeOutlined />,
 			onClick: () => {
-				navigate('/');
+				navigate('/home');
 			},
 		},
 		showDashboard && {
@@ -42,11 +51,11 @@ const Nav = ({
 			},
 		},
 		showDashboard2 && {
-			label: 'Dashboard 2',
-			key: 'dashboard2',
+			label: 'Users',
+			key: 'users',
 			icon: <DashboardOutlined />,
 			onClick: () => {
-				navigate('/dashboard');
+				navigate('/home');
 			},
 		},
 		showLogin && {
@@ -62,7 +71,7 @@ const Nav = ({
 			key: 'register',
 			icon: <LogoutOutlined />,
 			onClick: () => {
-				navigate('/register');
+				navigate('/signup');
 			},
 		},
 		showLogout && {
@@ -82,9 +91,9 @@ const Nav = ({
 			selectedKeys={[current]}
 			mode="horizontal"
 			items={items}
-			style={{ display: 'flex', justifyContent: 'right' }}
+			className='nav'
 		/>
 	);
 };
 
-export default Nav;
+export default Navbar;

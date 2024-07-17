@@ -46,6 +46,23 @@ export interface NotificationContextProps {
 	errorNotification: (message: string, description?: string) => void;
 }
 
-export interface NotificationProviderProps {
-	children: React.ReactNode;
+export interface LoginValues {
+	email: string;
+	password: string;
+}
+
+export interface AuthContextProps {
+	userName: string | null;
+	setUserName: (value: string | null) => void;
+	token: string | null;
+	setToken: (value: string | null) => void;
+	logout: () => void;
+}
+
+export interface SignUpValues {
+	firstName: string;
+	lastName: string;
+	email: string;
+	password: string;
+	role: string;
 }

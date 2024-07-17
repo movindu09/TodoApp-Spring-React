@@ -5,7 +5,7 @@ import { Todo } from '../models/Interfaces';
 import { useNotification } from '../NotificationContext';
 import TodoTable from '../components/TodoTable';
 import TodoForm from '../components/TodoForm';
-
+import Navbar from '../components/Navbar';
 
 const initialState: Todo = {
 	id: '',
@@ -20,7 +20,8 @@ const Home: React.FC = () => {
 	const [updateVisible, setUpdateVisible] = useState(false);
 	const [selectedTodo, setSelectedTodo] = useState<Todo>(initialState);
 	const [viewVisible, setViewVisible] = useState(false);
-	const [selectedViewTodo, setSelectedViewTodo] =	useState<Todo>(initialState);
+	const [selectedViewTodo, setSelectedViewTodo] =
+		useState<Todo>(initialState);
 	const { successNotification, errorNotification } = useNotification();
 
 	const showModal = () => {
@@ -50,10 +51,16 @@ const Home: React.FC = () => {
 	};
 
 	useEffect(() => {
+		const token = localStorage.getItem('token');
 		const fetchTodos = async () => {
 			try {
 				const response = await axios.get(
-					'http://localhost:8090/api/todos'
+					'http://localhost:8090/api/todos',
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
 				);
 				setLists(response.data);
 				console.log(response.data);
@@ -67,9 +74,14 @@ const Home: React.FC = () => {
 	}, [successNotification, errorNotification]);
 
 	const handleDelete = async (id: string) => {
+		const token = localStorage.getItem('token');
 		console.log(id);
 		try {
-			await axios.delete(`http://localhost:8090/api/todos/${id}`);
+			await axios.delete(`http://localhost:8090/api/todos/${id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
 			const updatedRecords = lists.filter((record) => record.id !== id);
 			setLists(updatedRecords);
 			successNotification('Successfully deleted to-do item');
@@ -80,25 +92,42 @@ const Home: React.FC = () => {
 	};
 
 	const onFinishHandler = async (values: Todo) => {
+		const token = localStorage.getItem('token');
 		try {
 			const response = await axios.post(
 				'http://localhost:8090/api/todos',
-				values
+				values,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
 			);
 			setLists([response.data, ...lists]);
 			successNotification('Successfully added user record.');
-		} catch (error) {
-			console.log('Error creating to-do:', error);
-			errorNotification('Unable to add the user record.');
+		} catch (error: any) {
+			console.log('Error:', error);
+			if (error.response && error.response.data) {
+				const errorMessages = Object.values(error.response.data);
+				errorNotification('Cannot create Todo', errorMessages.join(' '));
+			} else {
+				errorNotification('Cannot create user', error.message);
+			}
 		}
 	};
 
 	const onUpdateHandler = async (values: Todo) => {
+		const token = localStorage.getItem('token');
 		const id = selectedTodo.id;
 		try {
 			const response = await axios.put(
 				`http://localhost:8090/api/todos/${id}`,
-				values
+				values,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
 			);
 			const updatedRecords = lists.map((record) =>
 				record.id === selectedTodo.id ? response.data : record
@@ -106,14 +135,30 @@ const Home: React.FC = () => {
 			setLists(updatedRecords);
 			setUpdateVisible(false);
 			successNotification('Successfully changed user record.');
-		} catch (error) {
-			console.log(error);
-			errorNotification('Unable to change user record.');
+		} catch (error: any) {
+			console.log('Error:', error);
+			if (error.response && error.response.data) {
+				const errorMessages = Object.values(error.response.data);
+				errorNotification(
+					'Cannot create Todo',
+					errorMessages.join(' ')
+				);
+			} else {
+				errorNotification('Cannot create user', error.message);
+			}
 		}
 	};
 
 	return (
 		<div>
+			<Navbar
+				showDashboard={false}
+				showLogout={true}
+				showHome={true}
+				showDashboard2={false}
+				showLogin={false}
+				showRegister={false}
+			/>
 			<div className="Heading">
 				<h1>ToDo - List</h1>
 			</div>
@@ -160,7 +205,7 @@ const Home: React.FC = () => {
 				handleViewCancel={handleViewCancel}
 				viewVisible={viewVisible}
 				selectedViewTodo={selectedViewTodo}
-                cancel={handleCancel}
+				cancel={handleCancel}
 			/>
 
 			<TodoForm

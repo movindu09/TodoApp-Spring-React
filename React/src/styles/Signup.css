@@ -1,0 +1,18 @@
+.container {
+    margin: 0 auto;
+    width: 380px;
+}
+
+.header {
+    text-align: center;
+}
+
+.section {
+    align-items: center;
+    display: flex;
+}
+
+.signup {
+    text-align: center;
+    width: 100%;
+}
