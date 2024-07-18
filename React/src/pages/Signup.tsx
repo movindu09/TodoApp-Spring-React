@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Input, Select, Typography } from 'antd';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useNotification } from '../NotificationContext';
+import { useNotification } from '../context/NotificationContext';
 import '../styles/Signup.css';
 import Navbar from '../components/Navbar';
 import { SignUpValues } from '../models/Interfaces';
+import { userSignup } from '../api/axios';
 
 const { Text, Title } = Typography;
 
@@ -16,18 +17,14 @@ const Signup = () => {
 
 	const onFinish = async (values: SignUpValues) => {
 		console.log('Success:', values);
-		const { firstName, lastName, email, password, role } = values;
-
+		
 		try {
-			const response = await axios.post(
-				'http://localhost:8090/api/v1/auth/signup',
-				{
-					firstName,
-					lastName,
-					email,
-					password,
-					role,
-				}
+			const response = await userSignup(
+				values.firstName,
+				values.lastName,
+				values.email,
+				values.password,
+				values.role
 			);
 			console.log('response', response.data);
 

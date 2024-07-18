@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from 'react';
 import { Button, Form, Input, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useNotification } from '../NotificationContext';
-import { AuthContext } from '../hooks/AuthContext';
-import { AuthContextProps, LoginValues } from '../models/Interfaces';
+import { useNotification } from '../context/NotificationContext';
+import { AuthContext, AuthContextProps } from '../context/AuthContext';
+import { LoginValues } from '../models/Interfaces';
 import '../styles/Login.css';
 import Navbar from '../components/Navbar';
 import { jwtDecode } from 'jwt-decode';
+import { userLogin } from '../api/axios';
 const { Text, Title } = Typography;
 
 const Login: React.FC<AuthContextProps> = () => {
@@ -17,32 +18,23 @@ const Login: React.FC<AuthContextProps> = () => {
 	const { setToken, setRole } = useContext(AuthContext);
 	const navigate = useNavigate();
 
-	
-
 	const onFinish = async (values: LoginValues) => {
-		const { email, password } = values;
 		console.log('Success:', values);
 		try {
-			const response = await axios.post(
-				'http://localhost:8090/api/v1/auth/signin',
-				{
-					email,
-					password,
-				}
-			);
+			const response = await userLogin(values.email, values.password);
 			console.log(response.data);
 			if (response) {
-                const { token } = response.data;
-                localStorage.setItem('token', token);
-                setToken(token);
+				const { token } = response.data;
+				localStorage.setItem('token', token);
+				setToken(token);
 				const decodedToken: { role: string } = jwtDecode(token);
 				const role = decodedToken.role;
-                localStorage.setItem('role', role);
-                setRole(role);
+				localStorage.setItem('role', role);
+				setRole(role);
 				console.log(role);
-                successNotification('Login successful');
+				successNotification('Login successful');
 				navigate('/home');
-            }
+			}
 		} catch (error: any) {
 			console.log('Error:', error);
 			if (error.response && error.response.data) {
@@ -60,7 +52,6 @@ const Login: React.FC<AuthContextProps> = () => {
 				);
 			}
 		}
-
 	};
 
 	const onFinishFailed = (errorInfo: any) => {

@@ -34,7 +34,7 @@ const TodoTable: React.FC<TodoTableProps> = (props) => {
 		{
 			title: 'Actions',
 			key: 'action',
-			render: (text: string, record: Todo) => (
+			render: (record: Todo) => (
 				<Space size="middle">
 					<Button
 						type="primary"

@@ -3,7 +3,7 @@ import { notification } from 'antd';
 import {
 	NotificationContextProps,
 	NotificationProviderProps,
-} from '../models/Interfaces.tsx';
+} from '../models/Interfaces';
 
 const NotificationContext = createContext<NotificationContextProps | undefined>(
 	undefined

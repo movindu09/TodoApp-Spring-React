@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext, useEffect, useState } from 'react';
 import { Form, Input, Button, Select } from 'antd';
-import axios from 'axios';
 import { Todo } from '../models/Interfaces';
-import { useNotification } from '../NotificationContext';
+import { useNotification } from '../context/NotificationContext';
 import TodoTable from '../components/TodoTable';
 import TodoForm from '../components/TodoForm';
 import Navbar from '../components/Navbar';
-import { AuthContext } from '../hooks/AuthContext';
+import { AuthContext } from '../context/AuthContext';
+import { getTodos, deleteTodo, createTodo, updateTodo } from '../api/axios';
 
 const initialState: Todo = {
 	id: '',
@@ -56,14 +57,7 @@ const Home: React.FC = () => {
 		const token = localStorage.getItem('token');
 		const fetchTodos = async () => {
 			try {
-				const response = await axios.get(
-					'http://localhost:8090/api/todos',
-					{
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					}
-				);
+				const response = await getTodos(token || '');
 				setLists(response.data);
 				console.log(response.data);
 				successNotification('Data has been loaded successfully.');
@@ -79,11 +73,7 @@ const Home: React.FC = () => {
 		const token = localStorage.getItem('token');
 		console.log(id);
 		try {
-			await axios.delete(`http://localhost:8090/api/todos/${id}`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			await deleteTodo(id, token || '');
 			const updatedRecords = lists.filter((record) => record.id !== id);
 			setLists(updatedRecords);
 			successNotification('Successfully deleted to-do item');
@@ -96,22 +86,17 @@ const Home: React.FC = () => {
 	const onFinishHandler = async (values: Todo) => {
 		const token = localStorage.getItem('token');
 		try {
-			const response = await axios.post(
-				'http://localhost:8090/api/todos',
-				values,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			const response = await createTodo(values, token || '');
 			setLists([response.data, ...lists]);
 			successNotification('Successfully added user record.');
 		} catch (error: any) {
 			console.log('Error:', error);
 			if (error.response && error.response.data) {
 				const errorMessages = Object.values(error.response.data);
-				errorNotification('Cannot create Todo', errorMessages.join(' '));
+				errorNotification(
+					'Cannot create Todo',
+					errorMessages.join(' ')
+				);
 			} else {
 				errorNotification('Cannot create user', error.message);
 			}
@@ -122,15 +107,7 @@ const Home: React.FC = () => {
 		const token = localStorage.getItem('token');
 		const id = selectedTodo.id;
 		try {
-			const response = await axios.put(
-				`http://localhost:8090/api/todos/${id}`,
-				values,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}
-			);
+			const response = await updateTodo(id, values, token || '');
 			const updatedRecords = lists.map((record) =>
 				record.id === selectedTodo.id ? response.data : record
 			);

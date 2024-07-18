@@ -47,17 +47,13 @@ export interface NotificationContextProps {
 	errorNotification: (message: string, description?: string) => void;
 }
 
+export interface NotificationProviderProps {
+	children: React.ReactNode;
+}
+
 export interface LoginValues {
 	email: string;
 	password: string;
-}
-
-export interface AuthContextProps {
-	token: string | null;
-	setToken: (value: string | null) => void;
-	logout: () => void;
-	role: string | null;
-	setRole: (value: string | null) => void;
 }
 
 export interface SignUpValues {

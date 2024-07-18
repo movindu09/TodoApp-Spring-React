@@ -6,9 +6,8 @@ import {
 	LogoutOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../hooks/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import '../styles/Navbar.css';
-
 
 const Navbar = ({
 	showHome,
@@ -25,11 +24,11 @@ const Navbar = ({
 	showRegister: boolean;
 	showLogout: boolean;
 }) => {
-	const [current, setCurrent] = useState<string>(''); 
+	const [current, setCurrent] = useState<string>('');
 	const navigate = useNavigate();
 	const { logout } = useContext(AuthContext);
 
-	const onClick = (e: { key: SetStateAction<string>; }) => {
+	const onClick = (e: { key: SetStateAction<string> }) => {
 		setCurrent(e.key);
 	};
 
@@ -91,7 +90,7 @@ const Navbar = ({
 			selectedKeys={[current]}
 			mode="horizontal"
 			items={items}
-			className='nav'
+			className="nav"
 		/>
 	);
 };
