@@ -12,6 +12,7 @@ const TodoTable: React.FC<TodoTableProps> = (props) => {
 		viewVisible,
 		selectedViewTodo,
 		cancel,
+		role
 	} = props;
 
 	const columns = [
@@ -55,9 +56,9 @@ const TodoTable: React.FC<TodoTableProps> = (props) => {
 						okText="Yes"
 						cancelText="No"
 					>
-						<Button type="primary" danger>
+						{role === 'ADMIN' && (<Button type="primary" danger>
 							Delete
-						</Button>
+						</Button>)}
 					</Popconfirm>
 				</Space>
 			),

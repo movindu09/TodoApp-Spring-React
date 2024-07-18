@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Form, Input, Button, Select } from 'antd';
 import axios from 'axios';
 import { Todo } from '../models/Interfaces';
@@ -6,6 +6,7 @@ import { useNotification } from '../NotificationContext';
 import TodoTable from '../components/TodoTable';
 import TodoForm from '../components/TodoForm';
 import Navbar from '../components/Navbar';
+import { AuthContext } from '../hooks/AuthContext';
 
 const initialState: Todo = {
 	id: '',
@@ -15,6 +16,7 @@ const initialState: Todo = {
 };
 
 const Home: React.FC = () => {
+	const { role } = useContext(AuthContext);
 	const [lists, setLists] = useState<Todo[]>([]);
 	const [visible, setVisible] = useState(false);
 	const [updateVisible, setUpdateVisible] = useState(false);
@@ -206,6 +208,7 @@ const Home: React.FC = () => {
 				viewVisible={viewVisible}
 				selectedViewTodo={selectedViewTodo}
 				cancel={handleCancel}
+				role={role}
 			/>
 
 			<TodoForm

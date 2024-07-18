@@ -10,4 +10,5 @@ public class SignInRequest {
     private String email;
     @NotEmpty(message = "Password is required....")
     private String password;
+    private String role;
 }

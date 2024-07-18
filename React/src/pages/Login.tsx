@@ -1,19 +1,23 @@
 import React, { useContext } from 'react';
 import { Button, Form, Input, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useNotification } from '../NotificationContext';
 import { AuthContext } from '../hooks/AuthContext';
 import { AuthContextProps, LoginValues } from '../models/Interfaces';
 import '../styles/Login.css';
 import Navbar from '../components/Navbar';
+import { jwtDecode } from 'jwt-decode';
 const { Text, Title } = Typography;
 
 const Login: React.FC<AuthContextProps> = () => {
 	const [form] = Form.useForm();
 	const { successNotification, errorNotification } = useNotification();
-	const { setToken } = useContext(AuthContext);
+	const { setToken, setRole } = useContext(AuthContext);
+	const navigate = useNavigate();
+
+	
 
 	const onFinish = async (values: LoginValues) => {
 		const { email, password } = values;
@@ -28,11 +32,17 @@ const Login: React.FC<AuthContextProps> = () => {
 			);
 			console.log(response.data);
 			if (response) {
-				const { token } = response.data;
-				localStorage.setItem('token', token);
-				setToken(token);
-				successNotification('Login successful');
-			}
+                const { token } = response.data;
+                localStorage.setItem('token', token);
+                setToken(token);
+				const decodedToken: { role: string } = jwtDecode(token);
+				const role = decodedToken.role;
+                localStorage.setItem('role', role);
+                setRole(role);
+				console.log(role);
+                successNotification('Login successful');
+				navigate('/home');
+            }
 		} catch (error: any) {
 			console.log('Error:', error);
 			if (error.response && error.response.data) {
@@ -114,7 +124,7 @@ const Login: React.FC<AuthContextProps> = () => {
 							</Button>
 							<div className="signup">
 								<Text>Don't have an account?</Text>{' '}
-								<Link to="/register">Sign up</Link>
+								<Link to="/signup">Sign up</Link>
 							</div>
 						</Form.Item>
 					</Form>

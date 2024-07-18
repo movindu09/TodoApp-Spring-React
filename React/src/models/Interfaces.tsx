@@ -19,7 +19,8 @@ export interface TodoTableProps {
 	handleViewCancel: () => void;
 	viewVisible: boolean;
 	selectedViewTodo: Todo;
-    cancel: () => void;
+	cancel: () => void;
+	role: string | null;
 }
 
 export interface TodoFormProps {
@@ -52,11 +53,11 @@ export interface LoginValues {
 }
 
 export interface AuthContextProps {
-	userName: string | null;
-	setUserName: (value: string | null) => void;
 	token: string | null;
 	setToken: (value: string | null) => void;
 	logout: () => void;
+	role: string | null;
+	setRole: (value: string | null) => void;
 }
 
 export interface SignUpValues {

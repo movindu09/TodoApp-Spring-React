@@ -1,6 +1,7 @@
 package com.TodoApp.Todo.service.impl;
 
 
+import com.TodoApp.Todo.entity.User;
 import com.TodoApp.Todo.service.JWTService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -33,7 +34,10 @@ public class JWTServiceImpl implements JWTService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        User user = (User) userDetails;
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getUserRole().name());
+        return generateToken(claims, userDetails);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -45,8 +49,11 @@ public class JWTServiceImpl implements JWTService {
     }
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+        Map<String, Object> claims = new HashMap<>(extraClaims);
+        claims.put("role", ((User) userDetails).getUserRole().name());
+
         return Jwts.builder()
-                .setClaims(extraClaims)
+                .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
