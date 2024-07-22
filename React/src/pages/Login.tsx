@@ -1,49 +1,48 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useContext } from 'react';
 import { Button, Form, Input, Typography } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
-import { AuthContext, AuthContextProps } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import { LoginValues } from '../models/Interfaces';
 import '../styles/Login.css';
 import Navbar from '../components/Navbar';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { userLogin } from '../api/axios';
+
 const { Text, Title } = Typography;
 
-const Login: React.FC<AuthContextProps> = () => {
+const Login: React.FC = () => {
 	const [form] = Form.useForm();
 	const { successNotification, errorNotification } = useNotification();
 	const { setToken, setRole } = useContext(AuthContext);
 	const navigate = useNavigate();
 
 	const onFinish = async (values: LoginValues) => {
-		console.log('Success:', values);
 		try {
 			const response = await userLogin(values.email, values.password);
-			console.log(response.data);
+			console.log(response);
 			if (response) {
-				const { token } = response.data;
+				const { token, refreshToken } = response;
 				localStorage.setItem('token', token);
+				console.log('token', token);
+				localStorage.setItem('refreshToken', refreshToken);
+				console.log('refreshToken', refreshToken);
 				setToken(token);
 				const decodedToken: { role: string } = jwtDecode(token);
-				const role = decodedToken.role;
-				localStorage.setItem('role', role);
-				setRole(role);
-				console.log(role);
+				setRole(decodedToken.role);
+				localStorage.setItem('role', decodedToken.role);
 				successNotification('Login successful');
 				navigate('/home');
 			}
 		} catch (error: any) {
-			console.log('Error:', error);
 			if (error.response && error.response.data) {
 				if (error.response.status === 500) {
 					const errorMessage = error.response.data.message;
 					errorNotification('Login failed', errorMessage);
 				} else {
 					const errorMessages = Object.values(error.response.data);
-					errorNotification('Login failed', errorMessages.join(''));
+					errorNotification('Login failed', errorMessages.join(' '));
 				}
 			} else {
 				errorNotification(
@@ -97,11 +96,7 @@ const Login: React.FC<AuthContextProps> = () => {
 						</Form.Item>
 						<Form.Item
 							name="password"
-							rules={[
-								{
-									message: 'Please input your Password!',
-								},
-							]}
+							rules={[{ message: 'Please input your Password!' }]}
 						>
 							<Input.Password
 								prefix={<LockOutlined />}

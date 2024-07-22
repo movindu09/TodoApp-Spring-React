@@ -58,8 +58,8 @@ const Home: React.FC = () => {
 		const fetchTodos = async () => {
 			try {
 				const response = await getTodos(token || '');
-				setLists(response.data);
-				console.log(response.data);
+				setLists(response);
+				console.log(response);
 				successNotification('Data has been loaded successfully.');
 			} catch (error) {
 				console.log(error);

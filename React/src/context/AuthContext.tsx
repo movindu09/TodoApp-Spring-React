@@ -1,7 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 export interface AuthContextProps {
 	token: string | null;
 	setToken: (value: string | null) => void;
@@ -24,16 +23,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 	useEffect(() => {
 		const storedToken = localStorage.getItem('token');
 		const storedRole = localStorage.getItem('role');
-		if (storedToken) {
+		if (storedToken && storedRole) {
 			setToken(storedToken);
 			setRole(storedRole);
 			navigate('/home');
 		}
 	}, [navigate]);
 
+
 	const logout = () => {
 		localStorage.removeItem('token');
 		localStorage.removeItem('role');
+		localStorage.removeItem('refreshToken');
 		setToken(null);
 		setRole(null);
 		navigate('/login');
@@ -47,6 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 				role,
 				setRole,
 				logout,
+	
 			}}
 		>
 			{children}

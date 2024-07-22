@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
+import api from '../context/AxiosInstance';
 
 const BASE_URL = 'http://localhost:8090/api';
 
 const getTodos = async (token: string) => {
-	const response = await axios.get(`${BASE_URL}/todos`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
+	const response = await axios.get(
+					'http://localhost:8090/api/todos',
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
 	return response.data;
 };
 
@@ -39,7 +43,7 @@ const updateTodo = async (id: string, todo: any, token: string) => {
 };
 
 const userLogin = async (email: string, password: string) => {
-	const response = await axios.post(
+	const response = await api.post(
 		'http://localhost:8090/api/v1/auth/signin',
 		{
 			email,
@@ -68,5 +72,4 @@ const userSignup = async (
 	);
 	return response.data;
 };
-
 export { getTodos, deleteTodo, createTodo, updateTodo, userLogin, userSignup };
