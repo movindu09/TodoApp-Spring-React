@@ -1,7 +1,14 @@
 import axios from 'axios';
 
+
+const baseURL = import.meta.env.VITE_BASE_URL;
+const authURL = import.meta.env.VITE_AUTH_URL;
+
+console.log('Base URL:', baseURL);
+console.log('Auth URL:', authURL);
+
 const api = axios.create({
-	baseURL: 'http://localhost:8090',
+	baseURL: baseURL,
 });
 
 api.interceptors.request.use(
@@ -25,27 +32,26 @@ api.interceptors.response.use(
 		const { response } = error;
 		const originalRequest = error.config;
 
-		if (response && response.status === 401 && !originalRequest._retry) {
+		if (response && response.status === 403 && !originalRequest._retry) {
 			originalRequest._retry = true;
 
-			const refreshToken = localStorage.getItem('refreshToken');
-			if (!refreshToken) {
+			const oldRefreshToken = localStorage.getItem('refreshToken');
+			if (!oldRefreshToken) {
 				console.error('No refresh token found');
 				return Promise.reject(error);
 			}
 
 			try {
-				const refreshResponse = await axios.post(
-					'http://localhost:8090/api/v1/auth/refresh',
-					{ token: refreshToken }
-				);
+				const refreshResponse = await axios.post(`${authURL}/refresh`, {
+					token: oldRefreshToken,
+				});
 
 				console.log('Refresh API response:', refreshResponse.data);
 
-				const { token, newRefreshToken } = refreshResponse.data;
+				const { token, refreshToken } = refreshResponse.data;
 
 				localStorage.setItem('token', token);
-				localStorage.setItem('refreshToken', newRefreshToken);
+				localStorage.setItem('refreshToken', refreshToken);
 				api.defaults.headers['Authorization'] = `Bearer ${token}`;
 
 				originalRequest.headers['Authorization'] = `Bearer ${token}`;

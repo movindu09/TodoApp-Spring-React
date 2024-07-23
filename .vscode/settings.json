@@ -1,3 +1,4 @@
 {
-	"cSpell.words": ["Popconfirm", "signup", "todos"]
+	"cSpell.words": ["Popconfirm", "signup", "todos"],
+	"java.compile.nullAnalysis.mode": "automatic"
 }

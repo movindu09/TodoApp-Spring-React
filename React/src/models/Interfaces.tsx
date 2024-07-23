@@ -63,3 +63,11 @@ export interface SignUpValues {
 	password: string;
 	role: string;
 }
+
+export interface AuthContextProps {
+	token: string | null;
+	setToken: (value: string | null) => void;
+	logout: () => void;
+	role: string | null;
+	setRole: (value: string | null) => void;
+}

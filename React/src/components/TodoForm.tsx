@@ -24,7 +24,7 @@ const TodoForm: React.FC<TodoFormProps> = (props) => {
 			title="Update Todo"
 			open={updateVisible}
 			onCancel={handleUpdateCancel}
-			footer={null}
+			footer=""
 		>
 			{selectedTodo && (
 				<Form

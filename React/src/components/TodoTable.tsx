@@ -12,7 +12,7 @@ const TodoTable: React.FC<TodoTableProps> = (props) => {
 		viewVisible,
 		selectedViewTodo,
 		cancel,
-		role
+		role,
 	} = props;
 
 	const columns = [
@@ -33,9 +33,9 @@ const TodoTable: React.FC<TodoTableProps> = (props) => {
 		},
 		{
 			title: 'Actions',
-			key: 'action',
+			key: 'actions',
 			render: (record: Todo) => (
-				<Space size="middle">
+				<Space size="middle" key={record.id}>
 					<Button
 						type="primary"
 						onClick={() => showViewModal(record)}
@@ -48,18 +48,20 @@ const TodoTable: React.FC<TodoTableProps> = (props) => {
 					>
 						Update
 					</Button>
-					<Popconfirm
-						title="Delete the task"
-						description="Are you sure to delete this task?"
-						onConfirm={() => handleDelete(record.id)}
-						onCancel={cancel}
-						okText="Yes"
-						cancelText="No"
-					>
-						{role === 'ADMIN' && (<Button type="primary" danger>
-							Delete
-						</Button>)}
-					</Popconfirm>
+					{role === 'ADMIN' && (
+						<Popconfirm
+							title="Delete the task"
+							description="Are you sure to delete this task?"
+							onConfirm={() => handleDelete(record.id)}
+							onCancel={cancel}
+							okText="Yes"
+							cancelText="No"
+						>
+							<Button type="primary" danger>
+								Delete
+							</Button>
+						</Popconfirm>
+					)}
 				</Space>
 			),
 		},
